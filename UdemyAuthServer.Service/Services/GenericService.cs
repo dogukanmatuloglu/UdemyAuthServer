@@ -10,7 +10,7 @@ using UdemAuthServer.Core.Repositories;
 using UdemAuthServer.Core.Services;
 using UdemAuthServer.Core.UnitOfWork;
 
-namespace UdemyAuthServer.Service
+namespace UdemyAuthServer.Service.Services
 {
     public class GenericService<TEntity, TDto> : IServiceGeneric<TEntity, TDto> where TEntity : class where TDto : class
     {
@@ -25,7 +25,7 @@ namespace UdemyAuthServer.Service
 
         public async Task<Response<TDto>> AddAsync(TDto entity)
         {
-            var newEntity=ObjectMapper.Mapper.Map<TEntity>(entity);
+            var newEntity = ObjectMapper.Mapper.Map<TEntity>(entity);
             await _genericRepository.AddAsync(newEntity);
             await _unitOfWork.CommitAsync();
 
@@ -41,10 +41,10 @@ namespace UdemyAuthServer.Service
 
         public async Task<Response<TDto>> GetByIdAsync(int id)
         {
-            var entity=await _genericRepository.GetByIdAsync(id);
-            if (entity==null)
+            var entity = await _genericRepository.GetByIdAsync(id);
+            if (entity == null)
             {
-                return  Response<TDto>.Fail("ID Not Found", 404, true);
+                return Response<TDto>.Fail("ID Not Found", 404, true);
             }
             return Response<TDto>.Succes(ObjectMapper.Mapper.Map<TDto>(entity), 200);
         }
@@ -52,8 +52,8 @@ namespace UdemyAuthServer.Service
         public async Task<Response<NoDataDto>> Remove(int id)
         {
             var isExistEntity = await _genericRepository.GetByIdAsync(id);
-            
-            if (isExistEntity==null)
+
+            if (isExistEntity == null)
             {
                 return Response<NoDataDto>.Fail("Id Not Found", 404, true);
             }
@@ -64,7 +64,7 @@ namespace UdemyAuthServer.Service
 
         }
 
-        public async Task<Response<NoDataDto>> Update(TDto entity,int id)
+        public async Task<Response<NoDataDto>> Update(TDto entity, int id)
         {
             var isExistEntity = await _genericRepository.GetByIdAsync(id);
             if (isExistEntity == null)
@@ -80,8 +80,8 @@ namespace UdemyAuthServer.Service
 
         public async Task<Response<IEnumerable<TDto>>> Where(Expression<Func<TEntity, bool>> predicate)
         {
-            var list =  _genericRepository.Where(predicate);
-            return Response<IEnumerable<TDto>>.Succes(ObjectMapper.Mapper.Map<IEnumerable<TDto>>(await list.ToListAsync()), 200); 
+            var list = _genericRepository.Where(predicate);
+            return Response<IEnumerable<TDto>>.Succes(ObjectMapper.Mapper.Map<IEnumerable<TDto>>(await list.ToListAsync()), 200);
         }
     }
 }
