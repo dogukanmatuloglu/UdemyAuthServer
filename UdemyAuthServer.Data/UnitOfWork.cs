@@ -12,7 +12,7 @@ namespace UdemyAuthServer.Data
     {
         private readonly DbContext _context;
 
-        public UnitOfWork(DbContext context)
+        public UnitOfWork(AppDbContext context)
         {
             _context = context;
         }
