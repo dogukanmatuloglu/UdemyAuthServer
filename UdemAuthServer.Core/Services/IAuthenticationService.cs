@@ -8,11 +8,11 @@ using UdemAuthServer.Core.Dtos;
 
 namespace UdemAuthServer.Core.Services
 {
-    public interface IAuthanticationService
+    public interface IAuthenticationService
     {
         Task<Response<TokenDto>> CreateTokenAsync(LoginDto loginDto);
         Task<Response<TokenDto>> CreateTokenByRefreshToken(string refreshToken);
         Task<Response<NoDataDto>> RevokeRefreshToken(string refreshToken);
-        Task<Response<ClientTokenDto>> CreateTokenByClient(ClientLoginDto clientLoginDto);
+        Response<ClientTokenDto> CreateTokenByClient(ClientLoginDto clientLoginDto);
     }
 }
