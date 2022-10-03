@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace UdemyAuthServer.Service.Services
 {
-    internal class SignService
+    public class SignService
     {
         public static SecurityKey GetSymmetricKey(string securityKey)
         {
