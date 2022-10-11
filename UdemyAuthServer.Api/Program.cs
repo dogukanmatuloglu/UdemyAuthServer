@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using SharedLibrary.Configuration;
 using UdemAuthServer.Core.Configuration;
 using UdemAuthServer.Core.Models;
@@ -12,9 +13,11 @@ using UdemyAuthServer.Data.Repositories;
 using UdemyAuthServer.Service.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.Configure<CustomTokenOptions>(builder.Configuration.GetSection("TokenOptions"));
+builder.Services.Configure<CustomTokenOptions>(builder.Configuration.GetSection("TokenOption"));
 
 builder.Services.Configure<List<Client>>(builder.Configuration.GetSection("Clients"));
+builder.Services.AddAuthorization();
+builder.Services.AddControllers();
 
 builder.Services.AddIdentity<UserApp, IdentityRole>(
     opt => {
@@ -47,11 +50,13 @@ options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 
     
     });
-
-builder.Services.AddTransient(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+
 
 
 builder.Services.AddScoped(typeof(IServiceGeneric<,>), typeof(GenericService<,>));
@@ -64,7 +69,21 @@ opt.UseSqlServer(@"Data Source=.;Initial Catalog=UdemyAuthServer;Integrated Secu
 
 var app = builder.Build();
 
+app.UseHttpsRedirection();
+app.UseRouting();
+app.UseAuthentication();
+app.UseAuthorization();
 
-app.MapGet("/", () => "Hello World!");
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapDefaultControllerRoute();
+});
+
+
+
+
+
+
+
 
 app.Run();
